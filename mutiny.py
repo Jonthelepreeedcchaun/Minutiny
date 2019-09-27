@@ -45,6 +45,14 @@ def TB_hitbox():
     if mouse_pos[0] < TB_x + TB_size and mouse_pos[0] > TB_x and mouse_pos[1] > TB_y and mouse_pos[1] < TB_y + TB_size:
         return True
 
+def colour_dectect(x_pos, y_pos, size, colour):
+    if str(surface.get_at((x_pos, y_pos + size))[:3]) == colour or str(surface.get_at((x_pos + size, y_pos + size))[:3]) == colour:
+        return True
+
+def TB_colour_dectect():
+    if str(surface.get_at((TB_x, TB_y + TB_size))[:3]) == "(0, 0, 0)" or str(surface.get_at((TB_x + TB_size, TB_y + TB_size))[:3]) == "(0, 0, 0)":
+        return True
+
 #functions
 def text_objects(text, font):
     textSurface = font.render(text, True, (0, 0, 0))
@@ -106,7 +114,7 @@ while start == 1: #bigger loop that will contain everything, an embedded while l
         game_start = 1
     screen.blit(pygame.image.load(r'mutiny assets\cursor.png'), (mouse_pos[0], mouse_pos[1]))
 
-    TB
+    TB_grounded = 0
 
     while game_start == 1: #game loop
         loop_legality()
@@ -117,5 +125,15 @@ while start == 1: #bigger loop that will contain everything, an embedded while l
         mouse3 = pygame.mouse.get_pressed()[1]
 
         pygame.draw.rect(screen, (0, 150, 0), (TB_x, TB_y, TB_size, TB_size))
+        if TB_colour_dectect():
+            TB_grounded = 1
+            if TB_hitbox() and mouse1 == 1:
+
+        elif not TB_colour_dectect():
+            TB_grounded = 0
+            TB_x += TB_xV
+            TB_y -= TB_yV
+
+
 
         screen.blit(pygame.image.load(r'mutiny assets\cursor.png'), (mouse_pos[0], mouse_pos[1]))
