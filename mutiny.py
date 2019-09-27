@@ -110,11 +110,13 @@ while start == 1: #bigger loop that will contain everything, an embedded while l
     mouse3 = pygame.mouse.get_pressed()[1]
 
     screen.blit(pygame.image.load(r'mutiny assets\play_button.png'), (canvas_x/2 - 125, canvas_y/2 - 75))
-    if mouse_pos[0] > canvas_x/2 - 125 and mouse_pos[0] < canvas_x/2 + 125 and mouse_pos[1] > canvas_y/2 - 75 and mouse_pos[1] < canvas_y/2 + 75 and mouse1 == 1:
+    if hitbox(canvas_x/2, canvas_y/2, 75):
         game_start = 1
     screen.blit(pygame.image.load(r'mutiny assets\cursor.png'), (mouse_pos[0], mouse_pos[1]))
 
     TB_grounded = 0
+    TB_xV = 0
+    TB_yV = 0
 
     while game_start == 1: #game loop
         loop_legality()
@@ -128,7 +130,10 @@ while start == 1: #bigger loop that will contain everything, an embedded while l
         if TB_colour_dectect():
             TB_grounded = 1
             if TB_hitbox() and mouse1 == 1:
-
+                while mouse1 == 1:
+                    loop_legality()
+                    TB_xV = mouse_pos[0] - TB_x
+                    TB_yV = mouse_pos[1] - TB_y
         elif not TB_colour_dectect():
             TB_grounded = 0
             TB_x += TB_xV
