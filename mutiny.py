@@ -45,6 +45,14 @@ def TB_hitbox():
     if mouse_pos[0] < TB_x + TB_size and mouse_pos[0] > TB_x and mouse_pos[1] > TB_y and mouse_pos[1] < TB_y + TB_size:
         return True
 
+def colour_dectect(x_pos, y_pos, size, colour):
+    if str(surface.get_at((x_pos, y_pos + size))[:3]) == colour or str(surface.get_at((x_pos + size, y_pos + size))[:3]) == colour:
+        return True
+
+def TB_colour_dectect():
+    if str(surface.get_at((TB_x, TB_y + TB_size))[:3]) == "(0, 0, 0)" or str(surface.get_at((TB_x + TB_size, TB_y + TB_size))[:3]) == "(0, 0, 0)":
+        return True
+
 #functions
 def text_objects(text, font):
     textSurface = font.render(text, True, (0, 0, 0))
@@ -102,9 +110,13 @@ while start == 1: #bigger loop that will contain everything, an embedded while l
     mouse3 = pygame.mouse.get_pressed()[1]
 
     screen.blit(pygame.image.load(r'mutiny assets\play_button.png'), (canvas_x/2 - 125, canvas_y/2 - 75))
-    if mouse_pos[0] > canvas_x/2 - 125 and mouse_pos[0] < canvas_x/2 + 125 and mouse_pos[1] > canvas_y/2 - 75 and mouse_pos[1] < canvas_y/2 + 75 and mouse1 == 1:
+    if hitbox(canvas_x/2, canvas_y/2, 75):
         game_start = 1
     screen.blit(pygame.image.load(r'mutiny assets\cursor.png'), (mouse_pos[0], mouse_pos[1]))
+
+    TB_grounded = 0
+    TB_xV = 0
+    TB_yV = 0
 
     while game_start == 1: #game loop
         loop_legality()
@@ -115,15 +127,18 @@ while start == 1: #bigger loop that will contain everything, an embedded while l
         mouse3 = pygame.mouse.get_pressed()[1]
 
         pygame.draw.rect(screen, (0, 150, 0), (TB_x, TB_y, TB_size, TB_size))
-        if TB_hitbox() and mouse1 == 1:
-            while mouse1 == 1:
-                loop_legality()
+        if TB_colour_dectect():
+            TB_grounded = 1
+            if TB_hitbox() and mouse1 == 1:
+                while mouse1 == 1:
+                    loop_legality()
+                    TB_xV = mouse_pos[0] - TB_x
+                    TB_yV = mouse_pos[1] - TB_y
+        elif not TB_colour_dectect():
+            TB_grounded = 0
+            TB_x += TB_xV
+            TB_y -= TB_yV
 
-        elif mouse1 == 0 or not TB_hitbox():
-            if TB_y + TB_size < 3*canvas_y/4:
-                TB_y -= TB_yV
-                TB_yV -= 0.01
-            elif TB_y + TB_size > 3*canvas_y/4:
-                TB_yV = 0
+
 
         screen.blit(pygame.image.load(r'mutiny assets\cursor.png'), (mouse_pos[0], mouse_pos[1]))
